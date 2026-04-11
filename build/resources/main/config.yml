@@ -1,2 +1,127 @@
+# ═══════════════════════════════════════════════════════
+#  SimpleClan-PLUS  |  config.yml
+#  Every feature can be toggled with true/false below.
+# ═══════════════════════════════════════════════════════
+
 Language:
-  default: "EN"
+  default: "EN"   # EN, NL, DE, FR, SP, RU, etc.
+
+# ─── FEATURE TOGGLES ──────────────────────────────────
+features:
+  clan-wars:         true   # /clan war ...
+  clan-alliances:    true   # /clan ally ...
+  clan-home:         true   # /clan home ...
+  clan-duel:         true   # /clan duel ...
+  clan-land-claim:   true   # /clan claim ...
+  clan-bank:         true   # /clan bank ... (requires Vault)
+  join-notifications: true  # Notify clan on login/logout
+  clan-raid:         true   # /clan raid ...
+  clan-bounty:       true   # /clan bounty ... (requires Vault)
+  clan-leaderboards: true   # /clan top ...
+
+# ─── CLAN WARS ────────────────────────────────────────
+clan-wars:
+  min-members: 5          # Minimum members required to declare war
+  war-duration: 3600      # Seconds until a war auto-expires (3600 = 1 hour; 0 = no limit)
+  kill-limit: 0           # Kill limit to auto-end war (0 = disabled)
+
+# ─── CLAN ALLIANCES ───────────────────────────────────
+clan-alliances:
+  max-alliances: 5                    # Maximum alliances per clan
+  friendly-fire-protection: true      # Block damage between allied clans
+  proposal-timeout-seconds: 300       # How long a proposal stays open
+
+# ─── CLAN HOME ────────────────────────────────────────
+clan-home:
+  teleport-delay: 3           # Seconds before teleport (0 = instant)
+  show-border-messages: true  # Message when entering/leaving claimed territory
+  worlds-blacklist: []        # List of world names where /clan home is disabled
+  # worlds-blacklist:
+  #   - world_nether
+  #   - world_the_end
+
+# ─── CLAN DUEL ────────────────────────────────────────
+clan-duel:
+  timeout: 60               # Seconds to accept a duel before it expires
+  safe-duel: true           # If true, no items are dropped on duel death
+  restore-location: true    # Teleport players back after duel ends
+
+# ─── CLAN LAND CLAIM ──────────────────────────────────
+clan-land-claim:
+  max-claims: 10                  # Max chunks a clan can claim
+  protect-from-enemies: true      # Block block-break/place by enemy clans
+  protect-pvp-in-claims: false    # Block PvP against owner clan in their claim
+  show-border-messages: true      # Tell players when they cross a claim border
+  upkeep-cost-per-chunk: 10.0
+  upkeep-interval-hours: 24
+  upkeep-grace-period-hours: 48
+# ─── CLAN BANK ────────────────────────────────────────
+clan-bank:
+  # Requires Vault + an economy plugin (e.g. EssentialsX Economy)
+  max-balance: 0            # 0 = unlimited max balance
+  log-limit: 50             # How many transactions to keep in /clan bank log
+
+# ─── JOIN NOTIFICATIONS ───────────────────────────────
+join-notifications:
+  join-message: "§6[Clan] §a→ §e%player% §7[%role%] §7joined. §a%online% §7members online."
+  quit-message:  "§6[Clan] §c← §e%player% §7[%role%] §7left. §a%online% §7members online."
+
+# ─── CLAN RAID ────────────────────────────────────────
+clan-raid:
+  duration: 1800    # Seconds a raid lasts before auto-ending (30 min)
+  cooldown: 7200    # Seconds between raids for the same clan (2 hours)
+
+# ─── CLAN BOUNTY ──────────────────────────────────────
+clan-bounty:
+  # Requires Vault + an economy plugin
+  min-bounty: 100       # Minimum amount for a bounty
+  announce-server: true # Broadcast bounty placement/claim to all players
+
+# ─── CLAN LEADERBOARDS ────────────────────────────────
+clan-leaderboards:
+  display-count: 10     # Number of clans shown in /clan top
+
+# ─── PERMISSIONS REFERENCE ────────────────────────────
+# Below is a summary of all permission nodes added by the new features.
+# Add these to your permissions.yml / LuckPerms as needed.
+#
+# simpleclans.war.challenge       - Challenge a clan to war
+# simpleclans.war.accept          - Accept a war challenge
+# simpleclans.war.surrender       - Surrender a war
+# simpleclans.war.status          - View war status
+# simpleclans.war.info            - View war history
+#
+# simpleclans.ally.add            - Propose an alliance
+# simpleclans.ally.accept         - Accept an alliance
+# simpleclans.ally.remove         - Dissolve an alliance
+# simpleclans.ally.list           - List alliances
+#
+# simpleclans.home.teleport       - Teleport to clan home
+# simpleclans.home.set            - Set clan home (leader/co-leader)
+# simpleclans.home.delete         - Delete clan home (leader)
+#
+# simpleclans.duel.challenge      - Challenge a player to a duel
+# simpleclans.duel.accept         - Accept a duel
+#
+# simpleclans.claim.claim         - Claim a chunk
+# simpleclans.claim.unclaim       - Unclaim a chunk
+# simpleclans.claim.list          - List claims
+# simpleclans.claim.info          - Info about current chunk
+# simpleclans.claim.bypass        - Bypass land protection
+#
+# simpleclans.bank.deposit        - Deposit to clan bank
+# simpleclans.bank.withdraw       - Withdraw from clan bank (leader)
+# simpleclans.bank.balance        - Check clan bank balance
+# simpleclans.bank.log            - View bank transactions
+#
+# simpleclans.raid.start          - Start a raid
+# simpleclans.raid.end            - End a raid
+# simpleclans.raid.status         - View raid status
+# simpleclans.raid.history        - View raid history
+#
+# simpleclans.bounty.set          - Place a bounty
+# simpleclans.bounty.list         - List bounties
+# simpleclans.bounty.remove       - Remove a bounty
+#
+#
+# simpleclans.leaderboard         - View leaderboards

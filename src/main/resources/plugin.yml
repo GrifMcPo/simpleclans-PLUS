@@ -1,118 +1,268 @@
-name: simpleclans-PLUS
-main: simpleclans.simpleclans.SimpleclansPlugin
-version: 1.5.0
-api-version: 1.21
-author: [Robin] #My name has to stay here you can add your own name like this [Robin, Yourname]
-depend: [PlaceholderAPI]
+name: SimpleclansPlus
+version: "${project.version}"
+main: com.example.simpleclans.SimpleclansPlugin
+api-version: "1.20"
+description: "A lightweight and feature-rich clan management plugin."
+author: Robin
+website: "https://modrinth.com/plugin/simpleclans-plus"
+load: POSTWORLD
+softdepend:
+  - PlaceholderAPI
+  - LuckPerms
+  - Vault
 
 commands:
   clan:
-    description: Clan management command.
-    usage: |
-      /clan create <name> - Create a new clan.
-      /clan invite <player> - Invite a player to your clan.
-      /clan join <name> - Join a clan you were invited to.
-      /clan leave - Leave your current clan.
-      /clan info [name] - View clan info.
-      /clan promote <player> - Promote a clan member.
-      /clan demote <player> - Demote a clan member.
-      /clan disband - Disband a clan.
-      /clan update - update to the newset version.
-      /clan chat - Toggle clan chat.
-      /clan chatmsg - Send a message to your clan.
-      /clan kick <player> - Kick a player from your team.
-      /clan list - Lists all clans.
-      /clan menu - opens a clan menu 
-      /clan admin help - shows admin commands.
-    aliases: [c]
-    permission: simpleclans.use
-    permission-message: You do not have permission to use this command.
+    description: "Main clan command"
+    usage: "/<command> <subcommand>"
+    aliases: [clans]
+  clanchat:
+    description: "Toggle clan chat"
+    usage: "/<command>"
+  clanchatmsg:
+    description: "Send a one-time clan chat message"
+    usage: "/<command> <message>"
+
 permissions:
-  simpleclans.use:
-    description: Allows using general clan commands.
+
+  # ─── General ───────────────────────────────────────────────
+  simpleclans.create:
+    description: "Create a new clan"
     default: true
 
-  simpleclans.create:
-    description: Allows players to create clans.
-    default: true
-    
-  simpleclans.kick:
-    description: Allows you to kick players from your clan.
-    default: true
-    
   simpleclans.invite:
-    description: Allows inviting players to a clan.
+    description: "Invite a player to your clan"
     default: true
 
   simpleclans.join:
-    description: Allows joining clans.
+    description: "Join a clan via invite"
     default: true
 
   simpleclans.leave:
-    description: Allows leaving your clan.
+    description: "Leave your current clan"
     default: true
 
   simpleclans.info:
-    description: Allows viewing clan info.
-    default: true
-
-  simpleclans.promote:
-    description: Allows promoting members in your clan.
-    default: true
-
-  simpleclans.demote:
-    description: Allows demoting members in your clan.
-    default: true
-
-  simpleclans.disband:
-    description: Allows disbanding your clan.
+    description: "View clan information"
     default: true
 
   simpleclans.list:
-    description: Allows listing online players and clans.
+    description: "List all clans"
+    default: true
+
+  simpleclans.kick:
+    description: "Kick a member from your clan (Co-Leader+)"
+    default: false
+
+  simpleclans.promote:
+    description: "Promote a clan member (Co-Leader+)"
+    default: false
+
+  simpleclans.demote:
+    description: "Demote a clan member (Co-Leader+)"
+    default: false
+
+  simpleclans.disband:
+    description: "Disband your own clan (Leader only)"
+    default: false
+
+  simpleclans.chat:
+    description: "Toggle clan chat mode"
     default: true
 
   simpleclans.chatmsg:
-    description: Allows sending single clan chat messages.
+    description: "Send a single clan message without toggling"
     default: true
 
-  simpleclans.admin:
-    description: Grants access to admin subcommands.
+  simpleclans.menu:
+    description: "Open the clan GUI menu"
+    default: true
+
+  # ─── Leaderboard ───────────────────────────────────────────
+  simpleclans.leaderboard:
+    description: "View the clan leaderboard"
+    default: true
+
+  # ─── Alliances ─────────────────────────────────────────────
+  simpleclans.ally.add:
+    description: "Send an alliance request"
+    default: false
+
+  simpleclans.ally.accept:
+    description: "Accept an alliance request"
+    default: false
+
+  simpleclans.ally.remove:
+    description: "Remove an alliance"
+    default: false
+
+  simpleclans.ally.list:
+    description: "List current alliances"
+    default: true
+
+  # ─── Wars ──────────────────────────────────────────────────
+  simpleclans.war.challenge:
+    description: "Challenge another clan to war"
+    default: false
+
+  simpleclans.war.accept:
+    description: "Accept a war challenge"
+    default: false
+
+  simpleclans.war.surrender:
+    description: "Surrender an ongoing war"
+    default: false
+
+  simpleclans.war.status:
+    description: "Check current war status"
+    default: true
+
+  simpleclans.war.info:
+    description: "View detailed war information"
+    default: true
+
+  # ─── Raids ─────────────────────────────────────────────────
+  simpleclans.raid.start:
+    description: "Start a clan raid"
+    default: false
+
+  simpleclans.raid.end:
+    description: "End an active raid early"
+    default: false
+
+  simpleclans.raid.status:
+    description: "Check active raid status"
+    default: true
+
+  simpleclans.raid.history:
+    description: "View raid history"
+    default: true
+
+  # ─── Duels ─────────────────────────────────────────────────
+  simpleclans.duel.challenge:
+    description: "Challenge another clan to a duel"
+    default: false
+
+  simpleclans.duel.accept:
+    description: "Accept a duel challenge"
+    default: false
+
+  # ─── Clan Home ─────────────────────────────────────────────
+  simpleclans.home.teleport:
+    description: "Teleport to the clan home"
+    default: true
+
+  simpleclans.home.set:
+    description: "Set the clan home (Leader/Co-Leader)"
+    default: false
+
+  simpleclans.home.delete:
+    description: "Delete the clan home (Leader/Co-Leader)"
+    default: false
+
+  # ─── Land Claim ────────────────────────────────────────────
+  simpleclans.claim.claim:
+    description: "Claim a chunk for your clan"
+    default: false
+
+  simpleclans.claim.unclaim:
+    description: "Unclaim a clan chunk"
+    default: false
+
+  simpleclans.claim.buy:
+    description: "Buy additional claim slots"
+    default: false
+
+  simpleclans.claim.list:
+    description: "List all claimed chunks"
+    default: true
+
+  simpleclans.claim.info:
+    description: "View info about a specific chunk"
+    default: true
+
+  simpleclans.claim.bypass:
+    description: "Bypass land claim protections (admins)"
     default: op
 
+  # ─── Bounty ────────────────────────────────────────────────
+  simpleclans.bounty.set:
+    description: "Place a bounty on a player"
+    default: true
+
+  simpleclans.bounty.list:
+    description: "View active bounties"
+    default: true
+
+  simpleclans.bounty.remove:
+    description: "Remove your own bounty"
+    default: true
+
+  # ─── Bank ──────────────────────────────────────────────────
+  simpleclans.bank.deposit:
+    description: "Deposit money into the clan bank"
+    default: true
+
+  simpleclans.bank.withdraw:
+    description: "Withdraw money from the clan bank (Leader/Co-Leader)"
+    default: false
+
+  simpleclans.bank.balance:
+    description: "View the clan bank balance"
+    default: true
+
+  simpleclans.bank.log:
+    description: "View clan bank transaction log"
+    default: true
+
+  # ─── Admin ─────────────────────────────────────────────────
+  simpleclans.admin:
+    description: "Full admin access to all admin commands"
+    default: op
+    children:
+      simpleclans.admin.promote:  true
+      simpleclans.admin.demote:   true
+      simpleclans.admin.kick:     true
+      simpleclans.admin.disband:  true
+      simpleclans.admin.purge:    true
+      simpleclans.admin.reset:    true
+      simpleclans.admin.place:    true
+      simpleclans.admin.invite:   true
+      simpleclans.admin.reload:   true
+      simpleclans.claim.bypass:   true
+
   simpleclans.admin.promote:
-    description: Admin promote command.
+    description: "Admin: promote a player in any clan"
     default: op
 
   simpleclans.admin.demote:
-    description: Admin demote command.
+    description: "Admin: demote a player in any clan"
     default: op
 
   simpleclans.admin.kick:
-    description: Admin kick command.
+    description: "Admin: kick a player from any clan"
     default: op
 
   simpleclans.admin.disband:
-    description: Admin disband command.
-    default: op
-
-  simpleclans.admin.reset:
-    description: Admin reset clan command.
+    description: "Admin: disband any clan"
     default: op
 
   simpleclans.admin.purge:
-    description: Admin purge player command.
+    description: "Admin: purge all clan data"
+    default: op
+
+  simpleclans.admin.reset:
+    description: "Admin: reset clan stats"
     default: op
 
   simpleclans.admin.place:
-    description: Admin place a player into a clan.
+    description: "Admin: place clan-related items"
     default: op
 
   simpleclans.admin.invite:
-    description: Admin invite a player to any clan.
+    description: "Admin: invite a player to any clan"
     default: op
 
   simpleclans.admin.reload:
-    description: Admin reload plugin config.
+    description: "Admin: reload the plugin configuration"
     default: op
-

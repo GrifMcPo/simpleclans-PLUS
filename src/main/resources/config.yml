@@ -1,2 +1,108 @@
+# ============================================================
+#         SimpleclansPlus - Configuration File
+#         Author: Robin | License: MIT
+# ============================================================
+
+# ─────────────────────────────────────────
+#  Language
+# ─────────────────────────────────────────
 Language:
+  # Supported codes: EN, NL, DE, FR, ES, PT, IT, RU, ZH, JA, KO,
+  #                  PL, TR, AR, HI, SV, NO, DA, FI, CS, SK, HU,
+  #                  RO, BG, HR, SR, UK, EL, TH, VI
   default: "EN"
+
+# ─────────────────────────────────────────
+#  Feature Toggles
+#  Set any feature to false to fully disable it.
+# ─────────────────────────────────────────
+features:
+  clan-alliances:   true
+  clan-wars:        true
+  clan-raid:        true
+  clan-duel:        true
+  clan-home:        true
+  clan-land-claim:  true
+  clan-leaderboards: true
+  clan-bounty:      true
+  clan-bank:        true
+
+# ─────────────────────────────────────────
+#  Clan Alliances
+# ─────────────────────────────────────────
+clan-alliances:
+  # Maximum number of active alliances a clan may have at once
+  max-alliances: 5
+  # Prevent allied clans from dealing damage to each other
+  friendly-fire-protection: true
+
+# ─────────────────────────────────────────
+#  Clan Wars
+# ─────────────────────────────────────────
+clan-wars:
+  # Minimum members online required to declare or accept a war
+  min-members: 2
+  # Kill limit to automatically end the war (0 = no limit)
+  kill-limit: 0
+
+# ─────────────────────────────────────────
+#  Clan Raid
+# ─────────────────────────────────────────
+clan-raid:
+  # Cooldown in seconds before the same clan can start another raid
+  cooldown: 7200
+  # Maximum raid duration in seconds before it auto-ends
+  duration: 1800
+
+# ─────────────────────────────────────────
+#  Clan Duel
+# ─────────────────────────────────────────
+clan-duel:
+  # Seconds a duel challenge stays active before it expires
+  timeout: 60
+
+# ─────────────────────────────────────────
+#  Clan Home
+# ─────────────────────────────────────────
+clan-home:
+  # Warmup delay in seconds before teleportation completes
+  # (player must stand still during this time)
+  teleport-delay: 3
+
+# ─────────────────────────────────────────
+#  Clan Land Claim
+# ─────────────────────────────────────────
+clan-land-claim:
+  # Economy cost per chunk per upkeep cycle
+  upkeep-cost-per-chunk: 10.0
+  # How often (in hours) upkeep is charged
+  upkeep-interval-hours: 24
+  # Grace period (in hours) after a failed upkeep before chunks are lost
+  upkeep-grace-period-hours: 48
+  # Base cost to upgrade the maximum number of claimable chunks
+  upgrade-base-cost: 100.0
+  # Multiplier applied to upgrade cost for each tier
+  upgrade-cost-multiplier: 2.0
+  # Prevent non-clan-members from building/destroying in claimed land
+  protect-from-enemies: true
+
+# ─────────────────────────────────────────
+#  Clan Leaderboards
+# ─────────────────────────────────────────
+clan-leaderboards:
+  # Number of entries shown in /clan leaderboard
+  display-count: 10
+
+# ─────────────────────────────────────────
+#  Clan Bounty
+# ─────────────────────────────────────────
+clan-bounty:
+  # Minimum amount a player can place as a bounty
+  min-bounty: 100.0
+
+# ─────────────────────────────────────────
+#  Messages & Prefix
+#  You can override the plugin prefix here.
+# ─────────────────────────────────────────
+messages:
+  prefix: "&8[&aClans&8]&r "

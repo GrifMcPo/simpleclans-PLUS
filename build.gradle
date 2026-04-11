@@ -3,14 +3,15 @@ plugins {
     id("com.gradleup.shadow") version "9.3.1"
 }
 group = "simpleclans"
-version = "1.5.0"
+version = "1.5.1"
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(21))
     }
 }
 repositories {
-    mavenCentral()  
+    mavenCentral() 
+    maven { url 'https://jitpack.io' } 
     maven {
         name = "SpigotMC"
         url = uri("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -19,12 +20,14 @@ repositories {
         name = "Sonatype"
         url = uri("https://oss.sonatype.org/content/repositories/snapshots/")
     }
+
 }
 dependencies {
     compileOnly("org.spigotmc:spigot-api:1.20.1-R0.1-SNAPSHOT")
     compileOnly(files("libs/PlaceholderAPI-2.11.6.jar"))
     implementation(files("libs/json-20230618.jar"))
     compileOnly("org.jetbrains:annotations:24.0.1")
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
 }
 tasks.named("shadowJar") {
     archiveBaseName.set("simpleclans-PLUS")

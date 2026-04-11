@@ -31,6 +31,15 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
     private Connection connection;
     private ModrinthUpdater updater;
     private ClanMenu clanMenu;
+    private ClanWars       clanWars;
+    private ClanAlliances  clanAlliances;
+    private ClanHome       clanHome;
+    private ClanDuel       clanDuel;
+    private ClanLandClaim  clanLandClaim;
+    private ClanBank       clanBank;
+    private ClanRaid       clanRaid;
+    private ClanBounty     clanBounty;
+    private ClanLeaderboard clanLeaderboard;
 
     private final Map<UUID, Boolean> clanChatToggled = new HashMap<>();
     private final Map<String, FileConfiguration> languages = new HashMap<>();
@@ -50,6 +59,33 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
         Bukkit.getPluginManager().registerEvents(clanMenu, this);
         connectDatabase();
         createTables();
+        // ── New feature modules ──
+        clanWars        = new ClanWars(this);
+        clanAlliances   = new ClanAlliances(this);
+        clanHome        = new ClanHome(this);
+        clanDuel        = new ClanDuel(this);
+        clanLandClaim   = new ClanLandClaim(this);
+        clanRaid        = new ClanRaid(this);
+        clanBounty      = new ClanBounty(this);
+        clanLeaderboard = new ClanLeaderboard(this);
+
+
+// Vault-dependent features
+        if (Bukkit.getPluginManager().getPlugin("Vault") != null) {
+            clanBank = new ClanBank(this);
+            clanLeaderboard.setClanBank(clanBank);
+        }
+
+// Register listeners
+        Bukkit.getPluginManager().registerEvents(clanWars, this);
+        Bukkit.getPluginManager().registerEvents(clanAlliances, this);
+        Bukkit.getPluginManager().registerEvents(clanHome, this);
+        Bukkit.getPluginManager().registerEvents(clanDuel, this);
+        Bukkit.getPluginManager().registerEvents(clanLandClaim, this);
+        Bukkit.getPluginManager().registerEvents(clanRaid, this);
+        Bukkit.getPluginManager().registerEvents(clanBounty, this);
+        Bukkit.getPluginManager().registerEvents(new ClanJoinNotify(this), this);
+
         updater = new ModrinthUpdater(this, "simpleclans-plus");
         updater.checkForUpdates();
         Bukkit.getPluginManager().registerEvents(new UpdateNotifyListener(updater), this);
@@ -84,6 +120,15 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
                 player.sendMessage("§e/clan list §7- shows a clan list.");
                 player.sendMessage("§e/clan menu §7- Open the clan menu.");
                 player.sendMessage("§e/clan update §7- Update to newest version.");
+                player.sendMessage("§e/clan war <challenge|accept|surrender|status> §7- Clan war system");
+                player.sendMessage("§e/clan ally <add|accept|remove|list> §7- Clan alliance system");
+                player.sendMessage("§e/clan home [set|delete] §7- Clan home teleport");
+                player.sendMessage("§e/clan duel <player> §7- Challenge a player to a duel");
+                player.sendMessage("§e/clan claim / unclaim §7- Claim land for your clan");
+                player.sendMessage("§e/clan bank <deposit|withdraw|balance|log> §7- Clan bank");
+                player.sendMessage("§e/clan raid <start|end|status> §7- Clan raid system");
+                player.sendMessage("§e/clan bounty <set|list|remove> §7- Place bounties");
+                player.sendMessage("§e/clan top [kills|level|members|bank] §7- Clan leaderboards");
                 player.sendMessage("§6=======================================");
                 return true;
             }
@@ -212,6 +257,48 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
                         }
 
                         player.sendMessage(getMessage("joined_clan", Map.of("clan", clanName)));
+                }
+                case "war" -> {
+                    if (clanWars != null) clanWars.handleCommand(player, args);
+                }
+
+                case "ally" -> {
+                    if (clanAlliances != null) clanAlliances.handleCommand(player, args);
+                }
+
+                case "home" -> {
+                    if (clanHome != null) clanHome.handleCommand(player, args);
+                }
+
+                case "duel" -> {
+                    if (clanDuel != null) clanDuel.handleCommand(player, args);
+                }
+
+                case "claim", "unclaim", "remove", "claimlist", "claiminfo", "buy" -> {
+                    if (clanLandClaim != null) {
+                        String[] shiftedArgs = new String[args.length + 1];
+                        shiftedArgs[0] = args[0];
+                        shiftedArgs[1] = sub;
+                        System.arraycopy(args, 1, shiftedArgs, 2, args.length - 1);
+                        clanLandClaim.handleCommand(player, shiftedArgs);
+                    }
+                }
+
+                case "bank" -> {
+                    if (clanBank != null) clanBank.handleCommand(player, args);
+                    else player.sendMessage("§c[!] Clan Bank requires Vault.");
+                }
+
+                case "raid" -> {
+                    if (clanRaid != null) clanRaid.handleCommand(player, args);
+                }
+
+                case "bounty" -> {
+                    if (clanBounty != null) clanBounty.handleCommand(player, args);
+                }
+
+                case "top", "leaderboard" -> {
+                    if (clanLeaderboard != null) clanLeaderboard.handleCommand(player, args);
                 }
 
                 case "leave" -> {
@@ -430,7 +517,10 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
                         player.sendMessage(getMessage("clan_disband_leader", Map.of()));
                         return true;
                     }
-
+                    if (clanAlliances != null)  clanAlliances.removeAllAlliancesFor(clan);
+                    if (clanHome      != null)  clanHome.deleteHomeForClan(clan);
+                    if (clanLandClaim != null)  clanLandClaim.removeAllClaimsFor(clan);
+                    if (clanBank      != null)  clanBank.disbandBank(clan);
                     try (PreparedStatement ps = connection.prepareStatement(
                             "DELETE FROM clans WHERE name = ?")) {
                         ps.setString(1, clan);
@@ -796,8 +886,7 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
 
             if (args.length == 1) {
                 completions.addAll(Arrays.asList(
-                    "create", "invite", "join", "leave", "info", "promote", "demote", "kick", "disband",
-                    "help", "update", "list", "chat", "chatmsg", "admin", "menu"
+                    "create", "invite", "join", "leave", "info", "promote", "demote", "kick", "disband", "help", "update", "list", "chat", "chatmsg", "admin", "menu","war", "ally", "home", "duel", "claim", "unclaim","claimlist", "claiminfo", "bank", "raid","bounty", "top", "leaderboard"
                 ));
             }
 
@@ -859,7 +948,6 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
             return completions;
         });
     }
-
     private void loadAllLanguageFiles() {
         File langFolder = new File(getDataFolder(), "languages");
         if (!langFolder.exists()) langFolder.mkdirs();
@@ -973,10 +1061,14 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
             ps.executeUpdate();
 
             addMemberToClan(leader, name, "LEADER");
+
+            if (clanBank != null) clanBank.initBankForClan(name);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
+
 
     public void addMemberToClan(UUID uuid, String clan, String role) {
         try (PreparedStatement ps = connection.prepareStatement(
@@ -1187,7 +1279,12 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
             e.printStackTrace();
         }
     }
-
+    public Connection getConnection() {
+        return connection;
+    }
+    public net.milkbowl.vault.economy.Economy getEconomy() {
+        return clanBank != null ? clanBank.getEconomy() : null;
+    }
     public String getClanDescription(String clan) {
         try (PreparedStatement ps = connection.prepareStatement("SELECT description FROM clans WHERE name = ?")) {
             ps.setString(1, clan);
@@ -1231,25 +1328,68 @@ public class SimpleclansPlugin extends JavaPlugin implements Listener {
     }
 
     public void forceDisbandClan(String clan) {
-        // Notify online members before removing them
+
         for (UUID uuid : getClanMembers(clan).keySet()) {
             Player p = Bukkit.getPlayer(uuid);
             if (p != null) {
                 p.sendMessage(getMessage("you_disbanded", Map.of("clan", clan)));
             }
         }
+
         try (PreparedStatement ps = connection.prepareStatement("DELETE FROM clans WHERE name = ?")) {
             ps.setString(1, clan);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         try (PreparedStatement ps = connection.prepareStatement(
                 "UPDATE clan_members SET clan = NULL, role = NULL WHERE clan = ?")) {
             ps.setString(1, clan);
             ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+
+        // NEW CLEANUP
+        if (clanAlliances != null) clanAlliances.removeAllAlliancesFor(clan);
+        if (clanHome != null) clanHome.deleteHomeForClan(clan);
+        if (clanLandClaim != null) clanLandClaim.removeAllClaimsFor(clan);
+        if (clanBank != null) clanBank.disbandBank(clan);
+    }
+
+
+    // ─── CLAN BANK HELPERS (used by ClanLandClaim upkeep system) ──────────────
+
+    /**
+     * Returns the current balance of the clan's bank account.
+     * Delegates to ClanBank if Vault is available, otherwise returns 0.
+     */
+    public double getClanBankBalance(String clan) {
+        if (clanBank == null) return 0.0;
+        return clanBank.getBalance(clan);
+    }
+
+    /**
+     * Withdraws {@code amount} from the clan's bank account.
+     * Returns true on success, false if the balance is too low or Vault is absent.
+     */
+    public boolean withdrawFromClanBank(String clan, double amount) {
+        if (clanBank == null) return false;
+        if (clanBank.getBalance(clan) < amount) return false;
+        clanBank.withdraw(clan, amount);
+        return true;
+    }
+
+    /**
+     * Sends {@code message} to every online member of {@code clan}.
+     * Used by the upkeep scheduler to broadcast warnings and decay notices.
+     */
+    public void notifyClanMembers(String clan, String message) {
+        for (Player online : Bukkit.getOnlinePlayers()) {
+            if (clan.equalsIgnoreCase(getClanOf(online.getUniqueId()))) {
+                online.sendMessage(message);
+            }
         }
     }
 

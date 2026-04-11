@@ -1,9 +1,9 @@
 name: simpleclans-PLUS
 main: simpleclans.simpleclans.SimpleclansPlugin
-version: 1.5.0
+version: 1.5.1
 api-version: 1.21
 author: [Robin] #My name has to stay here you can add your own name like this [Robin, Yourname]
-depend: [PlaceholderAPI]
+depend: [PlaceholderAPI, Vault, LuckPerms]
 
 commands:
   clan:
