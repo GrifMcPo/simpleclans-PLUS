@@ -10,7 +10,7 @@ Language:
   # Supported codes: EN, NL, DE, FR, ES, PT, IT, RU, ZH, JA, KO,
   #                  PL, TR, AR, HI, SV, NO, DA, FI, CS, SK, HU,
   #                  RO, BG, HR, SR, UK, EL, TH, VI
-  default: "EN"
+  default: "RU"
 
 # ─────────────────────────────────────────
 #  Feature Toggles
